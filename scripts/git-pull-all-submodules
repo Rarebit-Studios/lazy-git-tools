@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Pull/update all submodules in this repo (init, then pull each)
+set -e
+root="$(git rev-parse --show-toplevel)"
+cd "$root"
+git submodule update --init --recursive
+git submodule foreach 'git pull' || true

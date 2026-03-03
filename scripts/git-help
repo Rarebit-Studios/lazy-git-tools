@@ -17,13 +17,15 @@ cat << 'EOF'
   git-create-ignore <type>  Add .gitignore (unity, godot, node, python, arduino, pico, esp32, dotnet)
   git-add-license <type>    Add LICENSE (CC, unlicense, gpl, mit, none)
 
-  Submodules  (run from inside the submodule folder)
-  ---------------------------------------------------------------
-  git-update-submodules [msg]   Commit in all submodules, then in this repo
+  Submodules  (all = from repo root; single = run from inside submodule folder)
+  -------------------------------------------------------------------------------
+  git-pull-all-submodules         Pull/update all submodules (init, then pull each)
+  git-commit-all-submodules [msg] Commit in all submodules, then in this repo
+  git-push-all-submodules         Push this repo and all submodules
   git-add-submodule <url> [name]  Add a repo as submodule in the current folder
-  git-remove-submodule <path>     Remove a submodule and clean up
-  git-pull-submodule              Pull only the current submodule
-  git-push-submodule              Push only the current submodule
+  git-remove-submodule <path>    Remove a submodule and clean up
+  git-pull-submodule             Pull only the current submodule
+  git-push-submodule             Push only the current submodule
   git-commit-submodule [msg]      Commit only in the current submodule
 
   GitHub

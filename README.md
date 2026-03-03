@@ -29,10 +29,12 @@ Cross-platform git helper scripts: pull, push, commit, submodules, branch, creat
 | `git-add-license` *type* | Add LICENSE file: CC, unlicense, gpl, mit, or none |
 
 ### Submodules
-Run `git-*-submodule` from inside the submodule directory; they act on that folder only.
+`git-*-all-submodules` run from repo root. `git-*-submodule` (no “all”) run from inside the submodule folder and act on that one only.
 | Command | Description |
 |---------|-------------|
-| `git-update-submodules` [*msg*] | Commit in all submodules, then in this repo (default: `"Update"`) |
+| `git-pull-all-submodules` | Pull/update all submodules (init, then pull each) |
+| `git-commit-all-submodules` [*msg*] | Commit in all submodules, then in this repo (default: `"Update"`) |
+| `git-push-all-submodules` | Push this repo and all submodules |
 | `git-add-submodule` *url* [*name*] | Add a repo as submodule in the **current folder** (not repo root) |
 | `git-remove-submodule` *path* | Remove a submodule and clean up |
 | `git-pull-submodule` | Pull only the **current** submodule |

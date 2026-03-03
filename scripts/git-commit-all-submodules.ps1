@@ -1,4 +1,4 @@
-# Update all submodules in this repo: commit in each, then commit here
+# Commit in all submodules, then in this repo (default message: Update)
 $ErrorActionPreference = "Stop"
 $root = git rev-parse --show-toplevel 2>$null
 if (-not $root) { Write-Error "Not a git repository"; exit 1 }
@@ -8,4 +8,4 @@ if (Test-Path .gitmodules) {
   git submodule foreach "git add -A; git commit -m '$msg'"
 }
 git add -A
-git commit -m $msg
+git commit -m $msg 2>$null
