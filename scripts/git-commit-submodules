@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Commit all latest changes and put any submodule changes back
+set -e
+root="$(git rev-parse --show-toplevel)"
+msg="${1:-Update}"
+cd "$root"
+# Commit in each submodule first
+if [ -f .gitmodules ]; then
+  git submodule foreach 'git add -A; git commit -m "'"$msg"'" || true'
+fi
+# Then commit in main repo (including submodule reference updates)
+git add -A
+git commit -m "$msg" || true

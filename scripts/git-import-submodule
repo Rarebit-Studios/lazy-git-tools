@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Add a git repo as a submodule in this folder
+# Usage: git-import-submodule <repository-url> [path]
+set -e
+if [ $# -lt 1 ]; then
+  echo "Usage: git-import-submodule <repository-url> [path]" >&2
+  exit 1
+fi
+url="$1"
+path="${2:-$(basename "$url" .git)}"
+cd "$(git rev-parse --show-toplevel)"
+git submodule add "$url" "$path"

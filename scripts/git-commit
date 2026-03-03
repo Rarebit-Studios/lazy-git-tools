@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# Commit latest changes for this folder repo (default message: Update)
+set -e
+cd "$(git rev-parse --show-toplevel)"
+msg="${1:-Update}"
+git add -A
+git commit -m "$msg" || true

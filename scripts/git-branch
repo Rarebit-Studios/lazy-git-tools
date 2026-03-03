@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Branch this repo with branchname and switch to it
+# Usage: git-branch <branchname>
+set -e
+if [ $# -lt 1 ]; then
+  echo "Usage: git-branch <branchname>" >&2
+  exit 1
+fi
+cd "$(git rev-parse --show-toplevel)"
+git checkout -b "$1"
