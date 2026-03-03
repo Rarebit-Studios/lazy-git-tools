@@ -1,4 +1,6 @@
-# git-tools
+# lazy-git-tools
+
+I made these because I'm lazy and I can never remember commandline parameters. 
 
 Cross-platform git helper scripts: pull, push, commit, submodules, branch, create repo, and GitHub login. Install once per system, use from any terminal.
 
