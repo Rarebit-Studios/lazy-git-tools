@@ -21,8 +21,11 @@ Run submodule commands (`git-*-submodule`) from inside the submodule directory; 
 | `git-push-submodule` | Push only the **current** submodule |
 | `git-commit-submodule` [*msg*] | Commit only in the **current** submodule (default: `"Update"`) |
 | `git-create` | Turn this folder into a repo: prompts for name, org, public/private, then creates on GitHub and adds remote |
-| `git-switch-organisation` | List your GitHub orgs, choose one; transfer this repo there, update remote, commit & push |
+| `git-switch-org` | List your GitHub orgs, choose one; transfer this repo there, update remote, commit & push |
+| `git-switch-private` | Set this GitHub repo to private |
+| `git-switch-public` | Set this GitHub repo to public |
 | `git-login` | Log in to Git via browser (GitHub device flow) |
+| `git-help` | List all lazy git-tools commands |
 
 ## Setup
 

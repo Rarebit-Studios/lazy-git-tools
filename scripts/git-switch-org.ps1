@@ -31,7 +31,7 @@ if (-not $origin) {
 }
 if ($origin -match "github\.com[:/]([^/]+)/([^/]+?)(?:\.git)?$") {
   $currentOwner = $Matches[1]
-  $repoName = $Matches[2]
+  $repoName = $Matches[2] -replace '\.git$', ''
 } else {
   Write-Error "Could not parse owner/repo from origin ($origin)."
   exit 1
@@ -53,6 +53,7 @@ if ($orgs.Count -eq 0) {
 
 Write-Host "Current repo: $currentOwner/$repoName"
 Write-Host "Select new organisation (repo will be transferred there):"
+Write-Host "  0) none (cancel)"
 $i = 1
 foreach ($o in $orgs) {
   $mark = if ($o -eq $currentOwner) { " (current)" } else { "" }
@@ -60,6 +61,10 @@ foreach ($o in $orgs) {
   $i++
 }
 $choice = Read-Host
+if ([string]::IsNullOrWhiteSpace($choice) -or $choice.Trim() -eq "0") {
+  Write-Host "Cancelled."
+  exit 0
+}
 $choiceNum = 0
 if (-not [int]::TryParse($choice.Trim(), [ref]$choiceNum) -or $choiceNum -lt 1 -or $choiceNum -gt $orgs.Count) {
   Write-Error "Invalid choice."

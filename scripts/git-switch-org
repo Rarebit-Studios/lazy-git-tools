@@ -38,8 +38,8 @@ if [ -z "$origin" ]; then
 fi
 # Parse owner/repo from https://github.com/owner/repo.git or git@github.com:owner/repo.git
 current_owner=$(echo "$origin" | sed -n 's|.*github\.com[:/]\([^/]*\)/.*|\1|p')
-repo_name=$(echo "$origin" | sed -n 's|.*github\.com[:/][^/]*/\([^/]*\)\.git\?$|\1|p')
-[ -z "$repo_name" ] && repo_name=$(echo "$origin" | sed -n 's|.*github\.com[:/][^/]*/\([^/]*\)$|\1|p')
+repo_name=$(echo "$origin" | sed -n 's|.*github\.com[:/][^/]*/\([^/]*\)$|\1|p')
+repo_name="${repo_name%.git}"
 if [ -z "$current_owner" ] || [ -z "$repo_name" ]; then
   echo "Could not parse owner/repo from origin ($origin)." >&2
   exit 1
@@ -60,6 +60,7 @@ fi
 
 echo "Current repo: $current_owner/$repo_name"
 echo "Select new organisation (repo will be transferred there):"
+echo "  0) none (cancel)"
 i=1
 for o in "${orgs[@]}"; do
   mark=""
@@ -68,8 +69,12 @@ for o in "${orgs[@]}"; do
   ((i++)) || true
 done
 read -r choice
-choice=$(echo "${choice}" | tr -d '[:space:]')
-if [ -z "$choice" ] || [ "$choice" -lt 1 ] 2>/dev/null || [ "$choice" -gt "${#orgs[@]}" ]; then
+choice=$(echo "${choice:-0}" | tr -d '[:space:]')
+if [ -z "$choice" ] || [ "$choice" = "0" ]; then
+  echo "Cancelled."
+  exit 0
+fi
+if [ "$choice" -lt 1 ] 2>/dev/null || [ "$choice" -gt "${#orgs[@]}" ]; then
   echo "Invalid choice." >&2
   exit 1
 fi

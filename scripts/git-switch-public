@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# Switch this GitHub repo to public
+set -e
+get_token() {
+  if [ -n "$GITHUB_TOKEN" ]; then echo "$GITHUB_TOKEN"; return; fi
+  [ -f "${HOME}/.git-credentials" ] && line=$(grep "github.com" "${HOME}/.git-credentials" 2>/dev/null | head -1) && [ -n "$line" ] && echo "$line" | sed -n 's|https://\([^:]*\):x-oauth-basic@github.com|\1|p' && return
+  command -v gh &>/dev/null && gh auth token 2>/dev/null && return
+  echo ""
+}
+token=$(get_token)
+[ -z "$token" ] && echo "No GitHub token found. Run git-login or set GITHUB_TOKEN." >&2 && exit 1
+root=$(git rev-parse --show-toplevel) && cd "$root"
+origin=$(git remote get-url origin 2>/dev/null) || true
+[ -z "$origin" ] && echo "No remote 'origin' found." >&2 && exit 1
+owner=$(echo "$origin" | sed -n 's|.*github\.com[:/]\([^/]*\)/.*|\1|p')
+repo=$(echo "$origin" | sed -n 's|.*github\.com[:/][^/]*/\([^/]*\)$|\1|p')
+repo="${repo%.git}"
+[ -z "$owner" ] || [ -z "$repo" ] && echo "Could not parse owner/repo from origin." >&2 && exit 1
+url="https://api.github.com/repos/${owner}/${repo}"
+response=$(curl -s -w "\n%{http_code}" -X PATCH "$url" \
+  -H "Authorization: token $token" -H "Accept: application/vnd.github.v3+json" -d '{"private":false}')
+code=$(echo "$response" | tail -1)
+body=$(echo "$response" | sed '$d')
+if [ "$code" -ge 400 ]; then
+  echo "GitHub API error ($code) for $owner/$repo" >&2
+  msg=$(echo "$body" | tr -d '\n' | sed -n 's/.*"message":"\([^"]*\)".*/\1/p')
+  [ -n "$msg" ] && echo "$msg" >&2
+  [ -n "$body" ] && [ -z "$msg" ] && echo "$body" >&2
+  [ "$code" = "404" ] && echo "If the repo was transferred, update remote: git remote set-url origin https://github.com/NEW_OWNER/REPO.git" >&2
+  exit 1
+fi
+echo "Repo is now public: https://github.com/${owner}/${repo}"
