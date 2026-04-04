@@ -1,22 +1,28 @@
 #!/usr/bin/env bash
-# Commit and push the repo and all submodules safely (no force push).
-# Order: deepest submodule first, then the root.
+# Commit and push all repos and submodules, overwriting remote history (forced).
+# Order: deepest submodule first, then work back to root.
 set -e
 
 root="$(git rev-parse --show-toplevel)"
 msg="${1:-Update}"
 cd "$root"
 
-commit_and_push_repo() {
+commit_and_force_push_repo() {
   local dir="$1"
   (cd "$dir" && {
+    # If detached, create/switch to a common branch so we can push HEAD cleanly.
+    if [ "$(git rev-parse --abbrev-ref HEAD)" = "HEAD" ]; then
+      git checkout -B main 2>/dev/null || git checkout -B master 2>/dev/null || true
+    fi
+
     git add -A
     git commit -m "$msg" || true
 
+    # If no upstream, set one. Always force push to overwrite remote.
     if git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1; then
-      git push || true
+      git push --force || true
     else
-      git push -u origin HEAD || true
+      git push -u origin HEAD --force || true
     fi
   })
 }
@@ -27,7 +33,7 @@ if [ -f .gitmodules ]; then
     rel="${dir#$root/}"
     [ -z "$rel" ] && rel="."
     echo "Entering '$rel'"
-    commit_and_push_repo "$dir"
+    commit_and_force_push_repo "$dir"
   done
 fi
 
@@ -36,7 +42,8 @@ git add -A
 git commit -m "$msg" || true
 
 if git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1; then
-  git push --recurse-submodules=on-demand
+  git push --force --recurse-submodules=on-demand
 else
-  git push -u origin HEAD --recurse-submodules=on-demand
+  git push -u origin HEAD --force --recurse-submodules=on-demand
 fi
+
